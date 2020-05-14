@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/guy_steinberg/Documents/DataStructures/Wet1/AVLTree.h
+Node.h
+/Users/guy_steinberg/Documents/DataStructures/Wet1/Node.h
+
+/Users/guy_steinberg/Documents/DataStructures/Wet1/DoublyLinkedList.h
+Node.h
+/Users/guy_steinberg/Documents/DataStructures/Wet1/Node.h
+
+/Users/guy_steinberg/Documents/DataStructures/Wet1/HelperDataStructs.h
+AVLTree.h
+/Users/guy_steinberg/Documents/DataStructures/Wet1/AVLTree.h
+
+/Users/guy_steinberg/Documents/DataStructures/Wet1/MusicManager.h
+library1.h
+/Users/guy_steinberg/Documents/DataStructures/Wet1/library1.h
+AVLTree.h
+/Users/guy_steinberg/Documents/DataStructures/Wet1/AVLTree.h
+DoublyLinkedList.h
+/Users/guy_steinberg/Documents/DataStructures/Wet1/DoublyLinkedList.h
+HelperDataStructs.h
+/Users/guy_steinberg/Documents/DataStructures/Wet1/HelperDataStructs.h
+
+/Users/guy_steinberg/Documents/DataStructures/Wet1/Node.h
+iostream
+-
+
+/Users/guy_steinberg/Documents/DataStructures/Wet1/library1.cpp
+library1.h
+/Users/guy_steinberg/Documents/DataStructures/Wet1/library1.h
+MusicManager.h
+/Users/guy_steinberg/Documents/DataStructures/Wet1/MusicManager.h
+
+/Users/guy_steinberg/Documents/DataStructures/Wet1/library1.h
+
