@@ -26,9 +26,10 @@ public:
     BasicNode* getPrev() const {return prev_; }
     BasicNode* getNext() const {return next_; }
 
-    //TODO deconstructor?
+    //TODO deconstructor
     ~BasicNode() {}
 };
+
 
 template <class T>
 class AVLNode {

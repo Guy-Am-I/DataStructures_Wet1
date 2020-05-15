@@ -6,6 +6,7 @@
 #define WET1_TREE_H
 
 #include "Node.h"
+#include <string>
 
 template <class T>
 class AVLTree {
@@ -18,6 +19,25 @@ public:
     AVLTree() : root_(NULL), min_(NULL){}
     //TODO deconstructor?
     ~AVLTree();
+
+
+    //PRINT HELPER - DEBUGGING
+    void printTree(AVLNode<T> *root, std::string indent, bool last) {
+        if (root != nullptr) {
+            std::cout << indent << std::endl;
+            if (last) {
+                std::cout << "R----" << std::endl;
+                indent = indent + "   ";
+            } else {
+                std::cout << "L----" << std::endl;
+                indent += "|  ";
+            }
+            std::cout << root->getDataToCompare() << std::endl;
+            printTree(root->getLeft(), indent, false);
+            printTree(root->getRight(), indent, true);
+        }
+        printf("Root is NULL\n");
+    }
 
     //class methods
     bool Insert(const T& value);
@@ -69,9 +89,9 @@ AVLNode<T>* AVLTree<T>::Find(AVLNode<T>* root, const int data) const {
         if( root->getDataToCompare() == data )
             return root; // Found
         else if( data < root->getDataToCompare())
-            return Find( root->getLeft(), data );
+            return Find(root->getLeft(), data);
         else
-            return Find( root->getRight(), data );
+            return Find(root->getRight(), data);
     }
 
     return NULL;

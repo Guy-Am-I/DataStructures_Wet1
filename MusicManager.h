@@ -34,6 +34,8 @@ public:
 
     void InOrderSameNumTree(AVLNode<sameNumTreeData>* root,int* pos, int numOfSongs, int* artists, int* songs);
     void InOrderSongIndexTree(AVLNode<sameArtistTreeData>* root, int* pos, int numOfSongs ,int artistID, int* artists, int* songs);
+
+    void Print(char* msg) {std::cout << msg << std::endl;}
 };
 /**
  * Create empty data structure which includes:
@@ -41,13 +43,16 @@ public:
  * RecommendList (DoublyLinkedList where each node represents number of streams)
  */
 MusicManager::MusicManager() {
+
     //initialize empty artist tree using default constructor (root node is NULL)
     artistTree = new AVLTree<artistTreeData>();
+    artistTree->printTree(artistTree->getRoot(), "", true);
 
     //initialize empty recomend list using default constructor (head, tail nodes are NULL)
     //each node in the list is like a "station" that holds all the songs with the same number of streams
     //with the head being the least (starts with 0 streams) and the tail being song with most number of streams (can be more than 1)
     recommendList = new DoublyLinkedList<recommendListData>();
+
     }
 
 /**
@@ -260,7 +265,7 @@ StatusType MusicManager::AmountOfStreams(int artistID, int songID, int *streams)
 StatusType  MusicManager::GetRecommendations(int numOfSongs, int *artists, int *songs) {
     //check validity
 
-    
+
     //keeps track of how many song reccomendations we have added so far (also position in array to add them to since we start at 0)
     int* pos = 0;
 
@@ -307,6 +312,8 @@ void MusicManager::EndProgram() {
     DeleteSubArrays(artistTree->getRoot());
     artistTree->DeleteTree(artistTree->getRoot());
 }
+
+
 
 //HELPER FUNCTIONS
 void MusicManager::DeleteSubTrees(AVLNode<sameNumTreeData>* root) {
@@ -361,7 +368,7 @@ void MusicManager::AddSongTreeToRecomendations(AVLNode<sameArtistTreeData>* minN
     AVLNode<sameArtistTreeData> *songParent = minNode;
     //either we have enough songs or we reached end of song tree
     while (*pos < numOfSongs && songParent != NULL) {
-        //Add min value song to reccomendation arrays
+        //Add min value song to recomendation arrays
         int songID = songParent->getData().songIndex;
         AddSongToRecomendations(pos, artistID, songID, artists, songs);
 

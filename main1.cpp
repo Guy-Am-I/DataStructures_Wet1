@@ -84,13 +84,13 @@ static bool isInit = false;
 int main(int argc, const char**argv) {
 
     char buffer[MAX_STRING_INPUT_SIZE];
-
     // Reading commands
     while (fgets(buffer, MAX_STRING_INPUT_SIZE, stdin) != NULL) {
         fflush(stdout);
         if (parser(buffer) == error)
             break;
-    };
+    }
+
     return 0;
 }
 
@@ -184,6 +184,7 @@ static errorType OnInit(void** DS, const char* const command) {
     isInit = true;
 
     ValidateRead(0, 0, "%s failed.\n", commandStr[INIT_CMD]);
+
     *DS = Init();
 
     if (*DS == NULL) {
