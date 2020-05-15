@@ -106,7 +106,7 @@ bool AVLTree<T>::Insert(const T& value) {
         min_ = root_;
     }
     else {
-        if(value.getDataToCompare() > min_->getDataToCompare()) {
+        if(value.getDataToCompare() < min_->getDataToCompare()) {
             min_ = new_node;
         }
         InsertNode(root_, new_node);

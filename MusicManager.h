@@ -82,10 +82,10 @@ StatusType MusicManager::AddDataCenter(int artistID, int numOfSongs) {
 
 
     artistTreeData newArtistData = artistTreeData(artistID, numOfSongs, artist_song_streams_arr);
-    newArtistData.PrintData();
 
     if(artistTree->Insert(newArtistData)) {return ALLOCATION_ERROR;}
 
+    std::cout << "Main Artist tree (first one)" << std::endl;
     artistTree->printTree(artistTree->getRoot(), nullptr, false);
 
     //Song Index tree data for new artist node
@@ -93,13 +93,13 @@ StatusType MusicManager::AddDataCenter(int artistID, int numOfSongs) {
     for(int i = 0; i < numOfSongs; i++){
         if(songIndexTree->Insert(sameArtistTreeData(i))) {return ALLOCATION_ERROR;}
     }
-    songIndexTree->printTree(songIndexTree->getRoot(), nullptr, false);
 
     sameNumTreeData newArtistNodeData = sameNumTreeData(artistID, songIndexTree);
 
     //check if the recommended list already has a "station" for songs with 0 streams
     BasicNode<recommendListData> *headStation = recommendList->getHead();
-    if (headStation->getData().numberOfStreams == 0) {
+
+    if (headStation != NULL && headStation->getData().numberOfStreams == 0) {
 
         //Add the new artist node to the tree
         AVLTree<sameNumTreeData> *stationSameNumTree = headStation->getData().sameNumTree;
@@ -113,6 +113,14 @@ StatusType MusicManager::AddDataCenter(int artistID, int numOfSongs) {
 
         //update start
         if(recommendList->InsertNodeHead(recommendListData(0, sameNumTree))) {return ALLOCATION_ERROR;}
+
+        std::cout << "Number of streams for station: " << std::endl;
+        std::cout << recommendList->getHead()->getDataToCompare() << std:: endl;
+        std::cout << "Tree for first station in list" << std::endl;
+        recommendList->getHead()->getData().sameNumTree->printTree(sameNumTree->getRoot(),
+                                                                   nullptr, false);
+        std:cout << "song index tree for artist in first station" << std::endl;
+        songIndexTree->printTree(songIndexTree->getRoot(), nullptr, false);
 
     }
     headStation = recommendList->getHead();
