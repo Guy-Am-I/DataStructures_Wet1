@@ -35,7 +35,6 @@ public:
     void InOrderSameNumTree(AVLNode<sameNumTreeData>* root,int* pos, int numOfSongs, int* artists, int* songs);
     void InOrderSongIndexTree(AVLNode<sameArtistTreeData>* root, int* pos, int numOfSongs ,int artistID, int* artists, int* songs);
 
-    void Print(char* msg) {std::cout << msg << std::endl;}
 };
 /**
  * Create empty data structure which includes:
@@ -46,7 +45,8 @@ MusicManager::MusicManager() {
 
     //initialize empty artist tree using default constructor (root node is NULL)
     artistTree = new AVLTree<artistTreeData>();
-    artistTree->printTree(artistTree->getRoot(), "", true);
+    //TODO erase when finished debugging
+    artistTree->printTree(artistTree->getRoot(), nullptr, false);
 
     //initialize empty recomend list using default constructor (head, tail nodes are NULL)
     //each node in the list is like a "station" that holds all the songs with the same number of streams
@@ -74,19 +74,26 @@ StatusType MusicManager::AddDataCenter(int artistID, int numOfSongs) {
         return FAILURE;
     }
 
+    std::cout <<"in Add artist: Valid Input." << std::endl;
+
     //create new node in tree for artist and insert into correct position
     //array for artist's songs, initialize all have NULL pointers
     BasicNode<recommendListData> **artist_song_streams_arr = new BasicNode<recommendListData> *[numOfSongs];
+
+
     artistTreeData newArtistData = artistTreeData(artistID, numOfSongs, artist_song_streams_arr);
+    newArtistData.PrintData();
 
     if(artistTree->Insert(newArtistData)) {return ALLOCATION_ERROR;}
+
+    artistTree->printTree(artistTree->getRoot(), nullptr, false);
 
     //Song Index tree data for new artist node
     AVLTree<sameArtistTreeData>* songIndexTree = new AVLTree<sameArtistTreeData>();
     for(int i = 0; i < numOfSongs; i++){
-        if(songIndexTree->Insert(i)) {return ALLOCATION_ERROR;}
+        if(songIndexTree->Insert(sameArtistTreeData(i))) {return ALLOCATION_ERROR;}
     }
-
+    songIndexTree->printTree(songIndexTree->getRoot(), nullptr, false);
 
     sameNumTreeData newArtistNodeData = sameNumTreeData(artistID, songIndexTree);
 

@@ -6,7 +6,21 @@
 #define WET1_TREE_H
 
 #include "Node.h"
+#include <iostream>
 #include <string>
+using namespace std;
+//TODO erase helper "trunk" for printing trees
+struct Trunk
+{
+    Trunk *prev;
+    string str;
+
+    Trunk(Trunk *prev, string str)
+    {
+        this->prev = prev;
+        this->str = str;
+    }
+};
 
 template <class T>
 class AVLTree {
@@ -20,24 +34,7 @@ public:
     //TODO deconstructor?
     ~AVLTree();
 
-
-    //PRINT HELPER - DEBUGGING
-    void printTree(AVLNode<T> *root, std::string indent, bool last) {
-        if (root != nullptr) {
-            std::cout << indent << std::endl;
-            if (last) {
-                std::cout << "R----" << std::endl;
-                indent = indent + "   ";
-            } else {
-                std::cout << "L----" << std::endl;
-                indent += "|  ";
-            }
-            std::cout << root->getDataToCompare() << std::endl;
-            printTree(root->getLeft(), indent, false);
-            printTree(root->getRight(), indent, true);
-        }
-        printf("Root is NULL\n");
-    }
+    void printTree(AVLNode<T> *root, Trunk *prev, bool isLeft);
 
     //class methods
     bool Insert(const T& value);
@@ -104,19 +101,23 @@ bool AVLTree<T>::Insert(const T& value) {
     if( !new_node )
         return true; // Out of memory
 
-    if(value.getDataToCompare() > min_->getDataToCompare()) {
-        min_ = new_node;
-    }
-    if( !root_ )
+    if( !root_ ) {
         root_ = new_node;
-    else
+        min_ = root_;
+    }
+    else {
+        if(value.getDataToCompare() > min_->getDataToCompare()) {
+            min_ = new_node;
+        }
         InsertNode(root_, new_node);
+    }
 
     return false;
 }
 
 template <class T>
 void AVLTree<T>::InsertNode(AVLNode<T>* root, AVLNode<T>* newNode) {
+
     //inserting a new node to a Binary Search Tree
     if (newNode->getDataToCompare() <= root->getDataToCompare()) {
         if (root->getLeft()) // keep searching on left side of tree
@@ -266,4 +267,56 @@ AVLNode<T>* AVLTree<T>::SubTreeMinNode(AVLNode<T> *node) {
         current = current->getLeft();
     return current;
 }
+
+//TODO delete code when done
+//////ONLINE CODE TO PRINT TREE IN UNDERSTANDABLE WAY////////
+
+
+// Helper function to print branches of the binary tree
+void showTrunks(Trunk *p)
+{
+    if (p == nullptr)
+        return;
+
+    showTrunks(p->prev);
+
+    cout << p->str;
+}
+
+// Recursive function to print binary tree
+// It uses inorder traversal
+template <class T>
+void AVLTree<T>::printTree(AVLNode<T> *root, Trunk *prev, bool isLeft)
+{
+    if (root == nullptr)
+        return;
+
+    string prev_str = "    ";
+    Trunk *trunk = new Trunk(prev, prev_str);
+
+    printTree(root->getLeft(), trunk, true);
+
+    if (!prev)
+        trunk->str = "---";
+    else if (isLeft)
+    {
+        trunk->str = ".---";
+        prev_str = "   |";
+    }
+    else
+    {
+        trunk->str = "`---";
+        prev->str = prev_str;
+    }
+
+    showTrunks(trunk);
+    cout << root->getDataToCompare() << endl;
+
+    if (prev)
+        prev->str = prev_str;
+    trunk->str = "   |";
+
+    printTree(root->getRight(), trunk, false);
+}
+
 #endif //WET1_TREE_H

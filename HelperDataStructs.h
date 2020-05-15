@@ -7,6 +7,7 @@
 
 #include "AVLTree.h"
 
+
 //Data types for all 4 different Data Structures we use in this problem
 //This way the tree and list data structures can stay as a generic template
 //and thus only the data changes to our needs
@@ -53,7 +54,11 @@ typedef struct artistTreeData {
         numOfSongs = numOfSongs_;
         songs = songs_;
     }
+
     const int getDataToCompare() const {return artistID; }
+    void PrintData(){
+        std::cout << "\nID: " << artistID << "  numSongs: " << numOfSongs << "  SongArray: " << songs << "\n" << std::endl;
+    }
 } artistTreeData;
 
 
