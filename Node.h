@@ -25,7 +25,8 @@ public:
     void setNext(BasicNode* next) {next_ = next;}
     BasicNode* getPrev() const {return prev_; }
     BasicNode* getNext() const {return next_; }
-    //TODO deconstructor (deletion)
+
+    //TODO deconstructor?
     ~BasicNode() {}
 };
 
@@ -48,12 +49,13 @@ public:
     void      setLeft(AVLNode* left) { left_ = left; }
     void      setRight(AVLNode* right) { right_ = right; }
     void      setParent(AVLNode* parent) { parent_ = parent; }
+    void      setData(T data) {data_ = data;}
 
     AVLNode*  getLeft() const { return left_; }
     AVLNode*  getRight() const { return right_; }
     AVLNode*  getParent() const { return parent_; }
 
-    //TODO deconstructor (deletion)
+    //TODO deconstructor?
     ~AVLNode() {}
 };
 #endif //WET1_NODE_H

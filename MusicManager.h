@@ -24,6 +24,9 @@ public:
     StatusType AmountOfStreams(int artistID, int songID, int* streams);
     StatusType GetRecommendations(int numOfSongs, int *artists, int* songs);
     void EndProgram();
+
+    void DeleteSubTrees(AVLNode<sameNumTreeData>* root);
+    void DeleteSubArrays(AVLNode<artistTreeData>* root);
 };
 /**
  * Create empty data structure which includes:
@@ -31,7 +34,6 @@ public:
  * RecommendList (DoublyLinkedList where each node represents number of streams)
  */
 MusicManager::MusicManager() {
-    //TODO add case of failure - return NULL?
     //initialize empty artist tree using default constructor (root node is NULL)
     artistTree = new AVLTree<artistTreeData>();
 
@@ -68,7 +70,11 @@ StatusType MusicManager::AddDataCenter(int artistID, int numOfSongs) {
     if(artistTree->Insert(newArtistData)) {return ALLOCATION_ERROR;}
 
     //Song Index tree data for new artist node
-    //TODO create songIndexTree (AVL tree) containing nodes from 1...numOfSongs
+    AVLTree<sameArtistTreeData>* songIndexTree = new AVLTree<sameArtistTreeData>();
+    for(int i = 0; i < numOfSongs; i++){
+        if(songIndexTree->Insert(i)) {return ALLOCATION_ERROR;}
+    }
+
 
     sameNumTreeData newArtistNodeData = sameNumTreeData(artistID, songIndexTree);
 
@@ -124,7 +130,7 @@ StatusType MusicManager::RemoveData(int artistID) {
         artistNode->getData().artist_song_index->DeleteTree(artistNode->getData().artist_song_index->getRoot());
 
         //delete artist from current same num tree
-        currentStationTree->RemoveNode(artistNode);
+        currentStationTree->RemoveNode(currentStationTree->getRoot(), artistNode);
 
     }
 
@@ -208,7 +214,7 @@ StatusType MusicManager::ArtistSongStreamed(int artistID, int songID) {
         found_artist->getData().songs[songID] = currentSongStation->getNext();
     }
     //now we can delete old song node from its previous song Index tree
-    songIndexForAppropiateStation->RemoveNode(songNodeInIndex);
+    songIndexForAppropiateStation->RemoveNode(songIndexForAppropiateStation->getRoot(), songNodeInIndex);
 
     return SUCCESS;
 }
@@ -264,20 +270,47 @@ StatusType  MusicManager::GetRecommendations(int numOfSongs, int *artists, int *
  * ends execution by releasing all stored memory of Data Structure
  */
 void MusicManager::EndProgram() {
-    //TODO implement proper deletion of Data Structure
     BasicNode<recommendListData>* station = recommendList->getHead();
     while (station != NULL) {
         AVLTree<sameNumTreeData>* sameNumTree = station->getData().sameNumTree;
-        //iterate over all nodes in tree
-            //for each node delete the tree associated with it
+        //delete all sub tress (based on data structure composition)
+        DeleteSubTrees(sameNumTree->getRoot());
 
         //delete the tree
+        sameNumTree->DeleteTree(sameNumTree->getRoot());
+
         station = station->getNext();
         //delete prev node
+        if(station != NULL) free(station->getPrev());
     }
-
+    //delete last node in list
+    free(station);
     //delete artist tree (taking care to delete array for each node)
+    DeleteSubArrays(artistTree->getRoot());
+    artistTree->DeleteTree(artistTree->getRoot());
+}
 
+//HELPER FUNCTIONS
+void MusicManager::DeleteSubTrees(AVLNode<sameNumTreeData>* root) {
+    if( root ) {
+        DeleteSubTrees(root->getLeft());  // Left
+        //parent,
+        // for each node delete the tree associated with it
+        AVLTree<sameArtistTreeData>* treeToDelete = root->getData().artist_song_index;
+        treeToDelete->DeleteTree(treeToDelete->getRoot());
+
+        DeleteSubTrees(root->getRight()); // Right
+    }
+}
+void MusicManager::DeleteSubArrays(AVLNode<artistTreeData>* root) {
+    if( root ) {
+        DeleteSubArrays(root->getLeft());  // Left
+        //parent,
+        // for each node delete the array associated with it
+        free(root->getData().songs);
+
+        DeleteSubArrays(root->getRight()); // Right
+    }
 }
 
 

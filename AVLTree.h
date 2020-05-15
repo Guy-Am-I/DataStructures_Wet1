@@ -16,16 +16,14 @@ private:
 
 public:
     AVLTree() : root_(NULL), min_(NULL){}
-    //AVLTree(AVLNode<T>* root) : root_(root), min_(root) {}
-    //TODO deconstructor
+    //TODO deconstructor?
     ~AVLTree();
 
     //class methods
-
     bool Insert(const T& value);
 
     void InsertNode(AVLNode<T>* root, AVLNode<T>* ins);
-    void RemoveNode(AVLNode<T>* node);
+    AVLNode<T>* RemoveNode(AVLNode<T>* root, AVLNode<T>* node);
     void DeleteTree(AVLNode<T>* root);
     AVLNode<T>* getMinNode();
 
@@ -38,6 +36,9 @@ public:
 
     void RotateLeft (AVLNode<T>* root);
     void RotateRight(AVLNode<T>* root);
+
+    AVLNode<T>* NodeWithMinValue(AVLNode<T> *node);
+
 };
 template <class T>
 AVLTree<T>::~AVLTree() {
@@ -127,11 +128,50 @@ void AVLTree<T>::InsertNode(AVLNode<T>* root, AVLNode<T>* newNode) {
     }
 }
 
-//TODO implement removeNode with avl balancing algorithm
+//TODO check remove node function
 template <class T>
-void AVLTree<T>::RemoveNode(AVLNode<T> *node) {
+AVLNode<T>* AVLTree<T>::RemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
+    // Find the node and delete it
+    if (root == NULL)
+        return root;
+    if (node->getDataToCompare() < root->getDataToCompare())
+        root->setLeft(RemoveNode(root->getLeft(), node));
+    else if (node->getDataToCompare() > root->getDataToCompare())
+        root->setRight(RemoveNode(root->getRight(), node));
+    else {
+        if ((root->getLeft() == NULL) ||
+            (root->getRight() == NULL)) {
+            AVLNode<T> *temp = root->getLeft() ? root->getLeft() : root->getRight();
+            if (temp == NULL) {
+                temp = root;
+                root = NULL;
+            } else
+                *root = *temp;
+            free(temp); //deleting the node
+        } else {
+            AVLNode<T> *temp = NodeWithMinValue(root->getRight());
+            root->setData(temp->getData());
+            root->setRight(RemoveNode(root->getRight(),temp));
+        }
+    }
 
+    if (root == NULL)
+        return root;
+
+    // AVL balancing algorithm
+    int balance = BalanceFactor(root);
+    if (balance > 1) { // left tree unbalanced
+        if (BalanceFactor(root->getLeft()) < 0) // right child of left tree
+            RotateLeft(root->getLeft()); // double rotation
+        RotateRight(root);
+    } else if (balance < -1) { // right tree unbalanced
+        if (BalanceFactor(root->getRight()) > 0) // left child of right tree
+            RotateRight(root->getRight());
+        RotateLeft(root);
+    }
+    return root;
 }
+
 
 template <class T>
 int AVLTree<T>::Height(AVLNode<T>* root) const {
@@ -198,5 +238,12 @@ void AVLTree<T>::RotateRight(AVLNode<T>* root) {
     }
 
     root->setParent(newroot);
+}
+template <class T>
+AVLNode<T>* AVLTree<T>::NodeWithMinValue(AVLNode<T> *node) {
+    AVLNode<T> *current = node;
+    while (current->getLeft() != NULL)
+        current = current->getLeft();
+    return current;
 }
 #endif //WET1_TREE_H
