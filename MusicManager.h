@@ -147,8 +147,10 @@ StatusType MusicManager::RemoveData(int artistID) {
 
     BasicNode<recommendListData>** artist_songs_streams_arr = artist->getData().songs;
 
+
     for(int i = 0; i<artist->getData().numOfSongs; i++) {
         AVLTree<sameNumTreeData>* currentStationTree = artist_songs_streams_arr[i]->getData().sameNumTree;
+
         AVLNode<sameNumTreeData>* root = currentStationTree->getRoot();
 
         //find artist Node in same num tree
@@ -160,9 +162,11 @@ StatusType MusicManager::RemoveData(int artistID) {
         currentStationTree->RemoveNode(currentStationTree->getRoot(), artistNode);
 
     }
-
+    //Delete artist from main tree
+    artistTree->RemoveNode(artistTree->getRoot(), artist);
     //Delete artist songs stream array at the end
     delete [] artist_songs_streams_arr;
+
 
     return SUCCESS;
 }
