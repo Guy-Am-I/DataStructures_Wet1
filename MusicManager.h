@@ -184,7 +184,7 @@ StatusType MusicManager::ArtistSongStreamed(int artistID, int songID) {
             found_artist->getData().numOfSongs) { return INVALID_INPUT; }
     }
 
-    //find the correct "station" in the list for the song which signifies the amonut of streams the song has
+    //find the correct "station" in the list for the song which signifies the amount of streams the song has
     BasicNode<recommendListData> *currentSongStation = found_artist->getData().songs[songID];
     AVLTree<sameNumTreeData> *treeForCorrectStation = currentSongStation->getData().sameNumTree;
     AVLNode<sameNumTreeData> *root = treeForCorrectStation->getRoot();
@@ -201,7 +201,7 @@ StatusType MusicManager::ArtistSongStreamed(int artistID, int songID) {
     int numOfStreams = currentSongStation->getDataToCompare();
     BasicNode<recommendListData> *nextStation = currentSongStation->getNext();
 
-    if (nextStation->getData().numberOfStreams == numOfStreams + 1) {
+    if (nextStation != NULL && nextStation->getData().numberOfStreams == numOfStreams + 1) {
         //get node for current artist in same num tree
         AVLTree<sameNumTreeData>* sameNumTree = nextStation->getData().sameNumTree;
         AVLNode<sameNumTreeData> *treeRoot = sameNumTree->getRoot();
@@ -227,7 +227,7 @@ StatusType MusicManager::ArtistSongStreamed(int artistID, int songID) {
         found_artist->getData().songs[songID] = nextStation;
 
     } else {
-        //insert new station in between these 2 stations and add the song to appropiate tree
+        //insert new station in between these 2 stations and add the song to appropriate tree
         AVLTree<sameArtistTreeData>* songIndexTree = new AVLTree<sameArtistTreeData>();
         if(songIndexTree->Insert(sameArtistTreeData(songID))) {return ALLOCATION_ERROR;}
 

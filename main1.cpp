@@ -108,7 +108,7 @@ static commandType CheckCommand(const char* const command,
         return (COMMENT_CMD);
     };
     for (int index = 0; index < numActions; index++) {
-        if (StrCmp(commandStr[index], command)) {
+       if (StrCmp(commandStr[index], command)) {
             *command_arg = command + strlen(commandStr[index]) + 1;
             return ((commandType)index);
         };
