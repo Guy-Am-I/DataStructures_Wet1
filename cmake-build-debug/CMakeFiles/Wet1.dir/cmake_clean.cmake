@@ -1,8 +1,10 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/Wet1.dir/library1.cpp.o"
-  "CMakeFiles/Wet1.dir/main1.cpp.o"
-  "Wet1"
+  "CMakeFiles/Wet1.dir/library1.cpp.obj"
+  "CMakeFiles/Wet1.dir/main1.cpp.obj"
+  "Wet1.exe"
+  "Wet1.exe.manifest"
   "Wet1.pdb"
+  "libWet1.dll.a"
 )
 
 # Per-language clean rules from dependency scanning.
