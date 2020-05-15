@@ -37,7 +37,7 @@ public:
     void RotateLeft (AVLNode<T>* root);
     void RotateRight(AVLNode<T>* root);
 
-    AVLNode<T>* NodeWithMinValue(AVLNode<T> *node);
+    AVLNode<T>* SubTreeMinNode(AVLNode<T> *node);
 
 };
 template <class T>
@@ -149,7 +149,7 @@ AVLNode<T>* AVLTree<T>::RemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
                 *root = *temp;
             free(temp); //deleting the node
         } else {
-            AVLNode<T> *temp = NodeWithMinValue(root->getRight());
+            AVLNode<T> *temp = SubTreeMinNode(root->getRight());
             root->setData(temp->getData());
             root->setRight(RemoveNode(root->getRight(),temp));
         }
@@ -240,7 +240,7 @@ void AVLTree<T>::RotateRight(AVLNode<T>* root) {
     root->setParent(newroot);
 }
 template <class T>
-AVLNode<T>* AVLTree<T>::NodeWithMinValue(AVLNode<T> *node) {
+AVLNode<T>* AVLTree<T>::SubTreeMinNode(AVLNode<T> *node) {
     AVLNode<T> *current = node;
     while (current->getLeft() != NULL)
         current = current->getLeft();

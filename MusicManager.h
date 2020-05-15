@@ -27,6 +27,13 @@ public:
 
     void DeleteSubTrees(AVLNode<sameNumTreeData>* root);
     void DeleteSubArrays(AVLNode<artistTreeData>* root);
+
+    void AddArtistTreeToRecomendations(AVLNode<sameNumTreeData>* minArtistNode, int* pos, int numOfSongs,int* artists, int *songs);
+    void AddSongTreeToRecomendations(AVLNode<sameArtistTreeData>* minNode, int* pos, int numOfSongs, int artistID, int* artists, int* songs);
+    void AddSongToRecomendations(int* pos, int artistID, int songID, int* artists, int* songs);
+
+    void InOrderSameNumTree(AVLNode<sameNumTreeData>* root,int* pos, int numOfSongs, int* artists, int* songs);
+    void InOrderSongIndexTree(AVLNode<sameArtistTreeData>* root, int* pos, int numOfSongs ,int artistID, int* artists, int* songs);
 };
 /**
  * Create empty data structure which includes:
@@ -251,19 +258,30 @@ StatusType MusicManager::AmountOfStreams(int artistID, int songID, int *streams)
  * @return appropiate error if encountered during function execution
  */
 StatusType  MusicManager::GetRecommendations(int numOfSongs, int *artists, int *songs) {
+    //check validity
+
+    
+    //keeps track of how many song reccomendations we have added so far (also position in array to add them to since we start at 0)
+    int* pos = 0;
+
+
     //get the last station in the doublyLinkedList
     BasicNode<recommendListData>* tailStation = recommendList->getTail();
 
-    //find the minimum song belonging to the minimum artist in the tree (based on order in both AVL trees)
-    AVLTree<sameNumTreeData>* mostStreamedArtistTree = tailStation->getData().sameNumTree;
-    AVLNode<sameNumTreeData>* minValueMostStreamedTree = mostStreamedArtistTree->getMinNode();
-    AVLNode<sameArtistTreeData>* minValueSongIndexForMinArtist = minValueMostStreamedTree->getData().artist_song_index->getMinNode();
+    while(*pos < numOfSongs && tailStation != NULL) {
 
-    artists[0] = minValueMostStreamedTree->getData().artistID;
-    songs[0] = minValueSongIndexForMinArtist->getData().songIndex;
+        //add the artists tree of this station
+        AVLTree<sameNumTreeData>* mostStreamedArtistTree = tailStation->getData().sameNumTree;
+        AddArtistTreeToRecomendations(mostStreamedArtistTree->getMinNode(), pos, numOfSongs, artists, songs);
 
-    //TODO implement rest of function using inorder scan
-
+        //advance to previous station (next highest in streams)
+        tailStation = tailStation->getPrev();
+    }
+    if(*pos >= numOfSongs && tailStation == NULL) {
+        //less songs in Data Structure than numOfSongs (not enough songs to return)
+        return FAILURE;
+    }
+    return SUCCESS;
 }
 
 /**
@@ -310,6 +328,62 @@ void MusicManager::DeleteSubArrays(AVLNode<artistTreeData>* root) {
         free(root->getData().songs);
 
         DeleteSubArrays(root->getRight()); // Right
+    }
+}
+
+void MusicManager::InOrderSameNumTree(AVLNode<sameNumTreeData>* root,int* pos, int numOfSongs, int* artists, int* songs){
+    if (root && *pos < numOfSongs) {
+        InOrderSameNumTree(root->getLeft(),pos, numOfSongs, artists, songs);
+
+        //Add the entire song tree (or as many songs) of this artist if possible (since he is next in line)
+        AddSongTreeToRecomendations(root->getData().artist_song_index->getMinNode(), pos, numOfSongs, root->getData().artistID, artists, songs);
+
+        InOrderSameNumTree(root->getRight(),pos, numOfSongs, artists, songs);
+    }
+}
+void MusicManager::InOrderSongIndexTree(AVLNode<sameArtistTreeData>* root, int* pos, int numOfSongs,int artistID, int* artists, int* songs){
+    if(root && *pos < numOfSongs) {
+        InOrderSongIndexTree(root->getLeft(), pos,numOfSongs, artistID, artists, songs);
+
+        //add song to reccomendation arrays
+        AddSongToRecomendations(pos, artistID, root->getData().songIndex, artists, songs);
+
+        InOrderSongIndexTree(root->getRight(), pos,numOfSongs, artistID, artists, songs);
+    }
+}
+void MusicManager::AddSongToRecomendations(int* pos, int artistID, int songID, int* artists, int* songs){
+    artists[*pos] = artistID;
+    songs[*pos] = songID;
+    *pos = *pos + 1;
+}
+void MusicManager::AddSongTreeToRecomendations(AVLNode<sameArtistTreeData>* minNode, int* pos, int numOfSongs, int artistID, int* artists, int* songs){
+    //initially min value song but gets updated to be node we add to reccomendation each iteration
+    AVLNode<sameArtistTreeData> *songParent = minNode;
+    //either we have enough songs or we reached end of song tree
+    while (*pos < numOfSongs && songParent != NULL) {
+        //Add min value song to reccomendation arrays
+        int songID = songParent->getData().songIndex;
+        AddSongToRecomendations(pos, artistID, songID, artists, songs);
+
+        //scan right sub tree (and add all songs with it)
+        InOrderSongIndexTree(songParent->getRight(), pos, numOfSongs,
+                             artistID, artists, songs);
+        songParent = songParent->getParent();
+    }
+}
+
+void MusicManager::AddArtistTreeToRecomendations(AVLNode<sameNumTreeData>* minArtistNode, int* pos, int numOfSongs,int* artists, int *songs){
+    AVLNode<sameNumTreeData>* artistParent = minArtistNode;
+    while(*pos < numOfSongs && artistParent != NULL) {
+        int artistID = artistParent->getData().artistID;
+        //Add this artist's songs to reccomendations based on ascending value (per exercise rules)
+        AddSongTreeToRecomendations(artistParent->getData().artist_song_index->getMinNode(), pos, numOfSongs, artistID, artists, songs);
+
+        //check right sub tree of artists and add as many songs from there
+        InOrderSameNumTree(artistParent->getRight(), pos, numOfSongs, artists, songs);
+
+        //go up in tree (update parent node)
+        artistParent = artistParent->getParent();
     }
 }
 
