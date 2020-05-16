@@ -29,9 +29,9 @@ private:
     AVLNode<T>* min_;
 
 
+    void DeleteTree(AVLNode<T>* node);
 public:
     AVLTree() : root_(NULL), min_(NULL){}
-    //TODO deconstructor?
     ~AVLTree();
 
     void printTree(AVLNode<T> *root, Trunk *prev, bool isLeft);
@@ -41,7 +41,7 @@ public:
 
     void InsertNode(AVLNode<T>* root, AVLNode<T>* ins);
     AVLNode<T>* RemoveNode(AVLNode<T>* root, AVLNode<T>* node);
-    void DeleteTree(AVLNode<T>* root);
+
     AVLNode<T>* getMinNode();
 
     AVLNode<T>* getRoot() const { return root_; }
@@ -59,19 +59,20 @@ public:
 };
 template <class T>
 AVLTree<T>::~AVLTree() {
+
     if( root_ ) {
-        DeleteNode(root_);
+        DeleteTree(root_);
+    }
+}
+template <class T>
+void AVLTree<T>::DeleteTree(AVLNode<T>* node){
+    if(node != NULL){
+        DeleteTree(node->getRight());
+        DeleteTree(node->getLeft());
+        delete(node);
     }
 }
 
-template <class T>
-void AVLTree<T>::DeleteTree(AVLNode<T>* root) {
-    if( root ) {
-        DeleteTree( root->getLeft() );
-        DeleteTree( root->getRight() );
-        delete root;
-    }
-}
 
 template <class T>
 AVLNode<T>* AVLTree<T>::getMinNode(){
@@ -168,16 +169,22 @@ AVLNode<T>* AVLTree<T>::RemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
                 root = NULL;
             } else
                 *root = *temp;
-            free(temp); //deleting the node
+
+            delete(temp); //deleting the node
+
         } else {
+
             AVLNode<T> *temp = SubTreeMinNode(root->getRight());
+
             root->setData(temp->getData());
+
             root->setRight(RemoveNode(root->getRight(),temp));
         }
     }
-
     if (root == NULL)
         return root;
+
+
 
     // AVL balancing algorithm
     int balance = BalanceFactor(root);

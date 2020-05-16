@@ -26,8 +26,10 @@ public:
     BasicNode* getPrev() const {return prev_; }
     BasicNode* getNext() const {return next_; }
 
-    //TODO deconstructor
-    ~BasicNode() {}
+    ~BasicNode() {
+        data_->DeleteData();
+        free(this);
+    }
 };
 
 
@@ -56,7 +58,8 @@ public:
     AVLNode*  getRight() const { return right_; }
     AVLNode*  getParent() const { return parent_; }
 
-    //TODO deconstructor?
-    ~AVLNode() {}
+    ~AVLNode() {
+        data_.DeleteData();
+    }
 };
 #endif //WET1_NODE_H

@@ -18,6 +18,7 @@ typedef struct sameArtistTreeData {
     };
 
     const int getDataToCompare() const {return songIndex; }
+    void DeleteData(){}
 } sameArtistTreeData;
 
 typedef struct sameNumTreeData{
@@ -29,6 +30,10 @@ typedef struct sameNumTreeData{
         artist_song_index = artist_song_index_;
     }
     const int getDataToCompare() const  {return artistID; }
+    void DeleteData(){
+        std::cout << "about to del song tree" << std::endl;
+        delete(artist_song_index);
+    }
 } sameNumTreeData;
 
 
@@ -42,6 +47,10 @@ typedef struct recommendListData {
     }
 
     const int getDataToCompare() const {return numberOfStreams; }
+    void DeleteData(){
+        std::cout << "about to del artist tree in a station" << std::endl;
+        delete(sameNumTree);
+    }
 } recommendListData;
 
 typedef struct artistTreeData {
@@ -56,8 +65,10 @@ typedef struct artistTreeData {
     }
 
     const int getDataToCompare() const {return artistID; }
-    void PrintData(){
-        std::cout << "\nID: " << artistID << "  numSongs: " << numOfSongs << "  SongArray: " << songs << "\n" << std::endl;
+    void DeleteData(){
+        std::cout << "about to del song array" << std::endl;
+        delete [] songs;
+
     }
 } artistTreeData;
 
