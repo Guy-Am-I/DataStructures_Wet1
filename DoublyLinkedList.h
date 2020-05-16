@@ -15,7 +15,7 @@ private:
 
     void DeleteList(BasicNode<T>* node);
 public:
-    DoublyLinkedList() : head_(NULL), tail_(NULL) {}
+    DoublyLinkedList() : head_(nullptr), tail_(nullptr) {}
     ~DoublyLinkedList();
 
     //class methods
@@ -37,7 +37,7 @@ DoublyLinkedList<T>::~DoublyLinkedList<T>(){
 
 template <class T>
 void DoublyLinkedList<T>::DeleteList(BasicNode<T>* node){
-    if(node != NULL){
+    if(node != nullptr){
         DeleteList(node->getNext());
         delete(node);
     }
@@ -51,13 +51,13 @@ bool DoublyLinkedList<T>::InsertNodeHead(const T& value) {
         return true; // Out of memory
 
     if(!head_) { //if there is no head (empty list)
-        new_node->setNext(NULL);
-        new_node->setPrev(NULL);
+        new_node->setNext(nullptr);
+        new_node->setPrev(nullptr);
         head_ = new_node;
         tail_ = new_node;
     }
     else {
-        new_node->setPrev(NULL);
+        new_node->setPrev(nullptr);
         new_node->setNext(head_);
         head_->setPrev(new_node);
         head_ = new_node;
@@ -72,7 +72,7 @@ bool DoublyLinkedList<T>::InsertNodeTail(const T& value){
 
     tail_->setNext(new_node);
     new_node->setPrev(tail_);
-    new_node->setNext(NULL);
+    new_node->setNext(nullptr);
     tail_ = new_node;
     return false;
 
@@ -88,11 +88,11 @@ bool DoublyLinkedList<T>::InsertNodeTail(const T& value){
  */
 template <class T>
 bool DoublyLinkedList<T>::InsertNodeBetween(BasicNode<T> *prev_node, BasicNode<T> *next_node, const T& value) {
-    if(prev_node == NULL) {
+    if(prev_node == nullptr) {
         InsertNodeHead(value);
         return false;
     }
-    if(next_node == NULL) {
+    if(next_node == nullptr) {
         InsertNodeTail(value);
         return false;
     }

@@ -65,14 +65,12 @@ AVLTree<T>::~AVLTree() {
 template <class T>
 void AVLTree<T>::DeleteTree(AVLNode<T>* node){
     if(node != NULL){
-        int id = node->getDataToCompare();
+
         DeleteTree(node->getRight());
         DeleteTree(node->getLeft());
         delete(node);
-        std::cout << "deleted node in avl tree" << std::endl;
     }
 }
-
 
 template <class T>
 AVLNode<T>* AVLTree<T>::getMinNode(){
@@ -150,7 +148,7 @@ void AVLTree<T>::InsertNode(AVLNode<T>* root, AVLNode<T>* newNode) {
     }
 }
 
-//TODO check remove node function
+
 template <class T>
 AVLNode<T>* AVLTree<T>::RemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
     // Find the node and delete it
@@ -181,8 +179,10 @@ AVLNode<T>* AVLTree<T>::RemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
             root->setRight(RemoveNode(root->getRight(),temp));
         }
     }
-    if (root == NULL)
+    if (root == NULL) {
+        root_ = NULL;
         return root;
+    }
 
 
 

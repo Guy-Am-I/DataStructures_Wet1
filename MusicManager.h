@@ -45,10 +45,10 @@ public:
  */
 MusicManager::MusicManager() {
 
-    //initialize empty artist tree using default constructor (root node is NULL)
+    //initialize empty artist tree using default constructor (root node is null)
     artistTree = new AVLTree<artistTreeData>();
 
-    //initialize empty recomend list using default constructor (head, tail nodes are NULL)
+    //initialize empty recomend list using default constructor (head, tail nodes are null)
     //each node in the list is like a "station" that holds all the songs with the same number of streams
     //with the head being the least (starts with 0 streams) and the tail being song with most number of streams (can be more than 1)
     recommendList = new DoublyLinkedList<recommendListData>();
@@ -72,7 +72,7 @@ StatusType MusicManager::AddDataCenter(int artistID, int numOfSongs) {
     }
 
     //create new node in tree for artist and insert into correct position
-    //array for artist's songs, initialize all have NULL pointers
+    //array for artist's songs, initialize all have null pointers
     BasicNode<recommendListData> **artist_song_streams_arr = new BasicNode<recommendListData> *[numOfSongs];
 
     artistTreeData newArtistData = artistTreeData(artistID, numOfSongs, artist_song_streams_arr);
@@ -108,14 +108,6 @@ StatusType MusicManager::AddDataCenter(int artistID, int numOfSongs) {
 
         //update start
         if(recommendList->InsertNodeHead(recommendListData(0, sameNumTree))) {return ALLOCATION_ERROR;}
-
-        std::cout << "Number of streams for station: " << std::endl;
-        std::cout << recommendList->getHead()->getDataToCompare() << std:: endl;
-        std::cout << "Tree for first station in list" << std::endl;
-        recommendList->getHead()->getData().sameNumTree->printTree(sameNumTree->getRoot(),
-                                                                   nullptr, false);
-        std:cout << "song index tree for artist in first station" << std::endl;
-        songIndexTree->printTree(songIndexTree->getRoot(), nullptr, false);
     }
 
     headStation = recommendList->getHead();
@@ -154,7 +146,7 @@ StatusType MusicManager::RemoveData(int artistID) {
 
         //delete artist from current same num tree if exists (could be multiple songs with same streams so we deleted already)
         if(artistNode != NULL) {
-            std::cout << "found artist in num tree: about to delete its song tree and then remove it from statino tree" << std::endl;
+            std::cout << "found artist in num tree: about to delete its song tree and then remove it from station tree" << std::endl;
             //delete song index avl tree recursively - happens in delete tree since it deletes all data of node (inc tree)
             currentStationTree->RemoveNode(currentStationTree->getRoot(),
                                            artistNode);
@@ -225,7 +217,7 @@ StatusType MusicManager::ArtistSongStreamed(int artistID, int songID) {
 
         } else {
 
-            //artist was found in the current same num tree - insert new song
+            //artist was found in the current same num tree - insert song
             if(artistNode->getData().artist_song_index->Insert(sameArtistTreeData(songID))) {return ALLOCATION_ERROR;}
         }
 
@@ -237,7 +229,7 @@ StatusType MusicManager::ArtistSongStreamed(int artistID, int songID) {
         std::cout << "Tree for this station:" << std::endl;
         sameNumTree->printTree(sameNumTree->getRoot(),nullptr, false);
         std:cout << "song index tree for artist (song streamed) in this station" << std::endl;
-        artistNode = nextStation->getData().sameNumTree->Find(nextStation->getData().sameNumTree->getRoot(), artistID);
+        artistNode = sameNumTree->Find(sameNumTree->getRoot(), artistID);
         artistNode->getData().artist_song_index->printTree(artistNode->getData().artist_song_index->getRoot(), nullptr, false);
 
     } else {
@@ -250,17 +242,17 @@ StatusType MusicManager::ArtistSongStreamed(int artistID, int songID) {
         AVLTree<sameNumTreeData>* sameNumTree = new AVLTree<sameNumTreeData>();
         if(sameNumTree->Insert(sameNumTreeData(artistID, songIndexTree))) {return ALLOCATION_ERROR;}
 
-        if(recommendList->InsertNodeBetween(currentSongStation, currentSongStation->getNext(), recommendListData(numOfStreams + 1, sameNumTree))) {return ALLOCATION_ERROR;}
+        if(recommendList->InsertNodeBetween(currentSongStation, nextStation, recommendListData(numOfStreams + 1, sameNumTree))) {return ALLOCATION_ERROR;}
 
         //update song array containing pointers to station
         artist->getData().songs[songID] = currentSongStation->getNext();
 
-        std::cout << "New Station with :" << numOfStreams + 1 << "streams" << std::endl;
+        std::cout << "New Station with : " << numOfStreams + 1 << "streams" << std::endl;
     }
 
     //now we can delete old song node from its previous song Index tree
     songIndexForAppropiateStation->RemoveNode(songIndexForAppropiateStation->getRoot(), songNodeInIndex);
-    std::cout << "Removed Song from previous tree (now in new tree with +1 streams)" << std::endl;
+    std::cout << "Removed Song from previous tree (now in new tree with: " << numOfStreams + 1 << " streams)" << std::endl;
 
     return SUCCESS;
 }
@@ -300,21 +292,23 @@ StatusType  MusicManager::GetRecommendations(int numOfSongs, int *artists, int *
     if(numOfSongs <= 0) return INVALID_INPUT;
 
     //keeps track of how many song reccomendations we have added so far (also position in array to add them to since we start at 0)
-    int* pos = 0;
+    int songsRecommended = 0;
+    int* pos = &songsRecommended;
 
-    std::cout << "recommendations mark: 1" << std::endl;
+
     //get the last station in the doublyLinkedList
     BasicNode<recommendListData>* tailStation = recommendList->getTail();
 
     while(*pos < numOfSongs && tailStation != NULL) {
-        std::cout << "recommendations mark: 2" << std::endl;
+
         //add the artists tree of this station
         AVLTree<sameNumTreeData>* mostStreamedArtistTree = tailStation->getData().sameNumTree;
         AddArtistTreeToRecomendations(mostStreamedArtistTree->getMinNode(), pos, numOfSongs, artists, songs);
-        std::cout << "recommendations mark: 3" << std::endl;
+
         //advance to previous station (next highest in streams)
         tailStation = tailStation->getPrev();
     }
+
     if(*pos >= numOfSongs && tailStation == NULL) {
         //less songs in Data Structure than numOfSongs (not enough songs to return)
         return FAILURE;
