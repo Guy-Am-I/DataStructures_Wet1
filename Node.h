@@ -58,7 +58,7 @@ public:
     AVLNode*  getParent() const { return parent_; }
 
     ~AVLNode() {
-        data_.DeleteData();
+       delete(&data_);
     }
 };
 #endif //WET1_NODE_H

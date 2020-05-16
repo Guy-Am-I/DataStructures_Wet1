@@ -35,5 +35,6 @@ StatusType GetRecommendedSongs(void *DS, int numOfSongs, int *artists, int *song
 
 void Quit(void** DS) {
     if (DS == NULL) return;
-    return ((MusicManager*) DS) -> EndProgram();
+    delete ((MusicManager*) *DS);
+    *DS =NULL;
 }

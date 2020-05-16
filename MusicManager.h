@@ -18,6 +18,7 @@ private:
 
 public:
     MusicManager();
+    ~MusicManager();
     StatusType AddDataCenter(int artistID, int numOfSongs);
     StatusType RemoveData(int artistID);
     StatusType ArtistSongStreamed(int artistID, int songID);
@@ -321,15 +322,14 @@ StatusType  MusicManager::GetRecommendations(int numOfSongs, int *artists, int *
 /**
  * ends execution by releasing all stored memory of Data Structure
  */
-void MusicManager::EndProgram() {
+
+MusicManager::~MusicManager() {
     //Delete Main Tree and all arrays of artists inside of it
-    delete(artistTree);
+    delete(this->artistTree);
 
     //Delete RecommendList and all trees and sub trees inside
     delete(recommendList);
 }
-
-
 
 //HELPER FUNCTIONS
 void MusicManager::DeleteSubTrees(AVLNode<sameNumTreeData>* root) {
