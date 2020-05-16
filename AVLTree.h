@@ -28,7 +28,6 @@ private:
     AVLNode<T>* root_;
     AVLNode<T>* min_;
 
-
     void DeleteTree(AVLNode<T>* node);
 public:
     AVLTree() : root_(NULL), min_(NULL){}
@@ -59,17 +58,18 @@ public:
 };
 template <class T>
 AVLTree<T>::~AVLTree() {
-
-    if( root_ ) {
+    if(root_) {
         DeleteTree(root_);
     }
 }
 template <class T>
 void AVLTree<T>::DeleteTree(AVLNode<T>* node){
     if(node != NULL){
+        int id = node->getDataToCompare();
         DeleteTree(node->getRight());
         DeleteTree(node->getLeft());
         delete(node);
+        std::cout << "deleted node in avl tree" << std::endl;
     }
 }
 

@@ -68,6 +68,7 @@ typedef struct artistTreeData {
     void DeleteData(){
         std::cout << "about to del song array" << std::endl;
         delete [] songs;
+        std::cout << "deleted array succesfully" << std::endl;
 
     }
 } artistTreeData;

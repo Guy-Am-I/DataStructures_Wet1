@@ -27,8 +27,7 @@ public:
     BasicNode* getNext() const {return next_; }
 
     ~BasicNode() {
-        data_->DeleteData();
-        free(this);
+        data_.DeleteData();
     }
 };
 

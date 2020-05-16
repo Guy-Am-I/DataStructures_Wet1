@@ -47,8 +47,6 @@ MusicManager::MusicManager() {
 
     //initialize empty artist tree using default constructor (root node is NULL)
     artistTree = new AVLTree<artistTreeData>();
-    //TODO erase when finished debugging
-    artistTree->printTree(artistTree->getRoot(), nullptr, false);
 
     //initialize empty recomend list using default constructor (head, tail nodes are NULL)
     //each node in the list is like a "station" that holds all the songs with the same number of streams
@@ -68,15 +66,14 @@ MusicManager::MusicManager() {
 StatusType MusicManager::AddDataCenter(int artistID, int numOfSongs) {
 
     //if artistID found then is is dupe and we return false(error)
-    StatusType isValid = CheckValidity(artistID, numOfSongs, true);
-    if( isValid != NULL){
+    StatusType isValid = CheckValidity(artistID, 0, true);
+    if( isValid != SUCCESS){
         return isValid;
     }
 
     //create new node in tree for artist and insert into correct position
     //array for artist's songs, initialize all have NULL pointers
     BasicNode<recommendListData> **artist_song_streams_arr = new BasicNode<recommendListData> *[numOfSongs];
-
 
     artistTreeData newArtistData = artistTreeData(artistID, numOfSongs, artist_song_streams_arr);
 
@@ -102,7 +99,8 @@ StatusType MusicManager::AddDataCenter(int artistID, int numOfSongs) {
         AVLTree<sameNumTreeData> *stationSameNumTree = headStation->getData().sameNumTree;
         if(stationSameNumTree->Insert(newArtistNodeData)) {return ALLOCATION_ERROR;}
 
-    } else {
+    }
+    else {
 
         sameNumTreeData newArtistData = sameNumTreeData(artistID, songIndexTree);
         AVLTree<sameNumTreeData>* sameNumTree = new AVLTree<sameNumTreeData>();
@@ -118,8 +116,8 @@ StatusType MusicManager::AddDataCenter(int artistID, int numOfSongs) {
                                                                    nullptr, false);
         std:cout << "song index tree for artist in first station" << std::endl;
         songIndexTree->printTree(songIndexTree->getRoot(), nullptr, false);
-
     }
+
     headStation = recommendList->getHead();
     //update array so that all elements point to 0 "station" in the list
     for (int i = 0; i < numOfSongs; i++) {
@@ -137,8 +135,8 @@ StatusType MusicManager::AddDataCenter(int artistID, int numOfSongs) {
 StatusType MusicManager::RemoveData(int artistID) {
 
     //if artist found return true (not an error)
-    StatusType isValid = CheckValidity(artistID,-1, false);
-    if (isValid != NULL) {
+    StatusType isValid = CheckValidity(artistID,0, false);
+    if (isValid != SUCCESS) {
         return isValid;
     }
 
@@ -183,9 +181,11 @@ StatusType MusicManager::RemoveData(int artistID) {
 StatusType MusicManager::ArtistSongStreamed(int artistID, int songID) {
 
     StatusType isValid = CheckValidity(artistID, songID, false);
-    if( isValid != NULL){
+    if( isValid != SUCCESS){
         return isValid;
     }
+    if (songID >= artistTree->Find(artistTree->getRoot(), artistID)->getData().numOfSongs) { return INVALID_INPUT; }
+
 
     AVLNode<artistTreeData>* artist = artistTree->Find(artistTree->getRoot(), artistID);
     //find the correct "station" in the list for the song which signifies the amount of streams the song has
@@ -275,9 +275,10 @@ StatusType MusicManager::ArtistSongStreamed(int artistID, int songID) {
 StatusType MusicManager::AmountOfStreams(int artistID, int songID, int *streams) {
 
     StatusType isValid = CheckValidity(artistID, songID, false);
-    if(isValid != NULL) {
+    if(isValid != SUCCESS) {
         return isValid;
     }
+    if (songID >=artistTree->Find(artistTree->getRoot(), artistID)->getData().numOfSongs) { return INVALID_INPUT; }
 
     AVLNode<artistTreeData>* artist = artistTree->Find(artistTree->getRoot(), artistID);
     //find the correct "station" in the list for the song which signifies the amonut of streams the song has
@@ -301,16 +302,16 @@ StatusType  MusicManager::GetRecommendations(int numOfSongs, int *artists, int *
     //keeps track of how many song reccomendations we have added so far (also position in array to add them to since we start at 0)
     int* pos = 0;
 
-
+    std::cout << "recommendations mark: 1" << std::endl;
     //get the last station in the doublyLinkedList
     BasicNode<recommendListData>* tailStation = recommendList->getTail();
 
     while(*pos < numOfSongs && tailStation != NULL) {
-
+        std::cout << "recommendations mark: 2" << std::endl;
         //add the artists tree of this station
         AVLTree<sameNumTreeData>* mostStreamedArtistTree = tailStation->getData().sameNumTree;
         AddArtistTreeToRecomendations(mostStreamedArtistTree->getMinNode(), pos, numOfSongs, artists, songs);
-
+        std::cout << "recommendations mark: 3" << std::endl;
         //advance to previous station (next highest in streams)
         tailStation = tailStation->getPrev();
     }
@@ -325,24 +326,11 @@ StatusType  MusicManager::GetRecommendations(int numOfSongs, int *artists, int *
  * ends execution by releasing all stored memory of Data Structure
  */
 void MusicManager::EndProgram() {
-    BasicNode<recommendListData>* station = recommendList->getHead();
-    while (station != NULL) {
-        AVLTree<sameNumTreeData>* sameNumTree = station->getData().sameNumTree;
-        //delete all sub tress (based on data structure composition)
-        DeleteSubTrees(sameNumTree->getRoot());
-
-        //delete the tree
-        delete(sameNumTree);
-
-        station = station->getNext();
-        //delete prev node
-        if(station != NULL) free(station->getPrev());
-    }
-    //delete last node in list
-    free(station);
-    //delete artist tree (taking care to delete array for each node)
-    DeleteSubArrays(artistTree->getRoot());
+    //Delete Main Tree and all arrays of artists inside of it
     delete(artistTree);
+
+    //Delete RecommendList and all trees and sub trees inside
+    delete(recommendList);
 }
 
 
@@ -437,7 +425,7 @@ StatusType MusicManager::CheckValidity(int artistID, int songID, bool returnFals
         if (found_artist == NULL) { return FAILURE; }
     }
 
-    if (songID >=found_artist->getData().numOfSongs) { return INVALID_INPUT; }
+    return SUCCESS;
 }
 
 

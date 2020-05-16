@@ -13,6 +13,7 @@ private:
     BasicNode<T>* head_;
     BasicNode<T>* tail_;
 
+    void DeleteList(BasicNode<T>* node);
 public:
     DoublyLinkedList() : head_(NULL), tail_(NULL) {}
     ~DoublyLinkedList();
@@ -24,12 +25,21 @@ public:
     bool InsertNodeBetween(BasicNode<T>* prev_node,BasicNode<T> *next_node, const T& value);
     bool InsertNodeHead(const T& value);
     bool InsertNodeTail(const T& value);
+
+
 };
 template <class T>
 DoublyLinkedList<T>::~DoublyLinkedList<T>(){
     if(head_) {
-        delete(head_->getNext());
-        delete(head_);
+        DeleteList(head_);
+    }
+}
+
+template <class T>
+void DoublyLinkedList<T>::DeleteList(BasicNode<T>* node){
+    if(node != NULL){
+        DeleteList(node->getNext());
+        delete(node);
     }
 }
 
