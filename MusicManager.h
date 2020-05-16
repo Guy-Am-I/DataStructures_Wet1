@@ -308,8 +308,9 @@ StatusType  MusicManager::GetRecommendations(int numOfSongs, int *artists, int *
         tailStation = tailStation->getPrev();
     }
 
-    if(*pos >= numOfSongs && tailStation == NULL) {
+    if(*pos < numOfSongs && tailStation == NULL) {
         //less songs in Data Structure than numOfSongs (not enough songs to return)
+
         return FAILURE;
     }
     return SUCCESS;
@@ -352,7 +353,7 @@ void MusicManager::DeleteSubArrays(AVLNode<artistTreeData>* root) {
 }
 
 void MusicManager::InOrderSameNumTree(AVLNode<sameNumTreeData>* root,int* pos, int numOfSongs, int* artists, int* songs){
-    if (root && *pos < numOfSongs) {
+    if (root != NULL && *pos < numOfSongs) {
         InOrderSameNumTree(root->getLeft(),pos, numOfSongs, artists, songs);
 
         //Add the entire song tree (or as many songs) of this artist if possible (since he is next in line)
@@ -362,7 +363,7 @@ void MusicManager::InOrderSameNumTree(AVLNode<sameNumTreeData>* root,int* pos, i
     }
 }
 void MusicManager::InOrderSongIndexTree(AVLNode<sameArtistTreeData>* root, int* pos, int numOfSongs,int artistID, int* artists, int* songs){
-    if(root && *pos < numOfSongs) {
+    if(root != NULL && *pos < numOfSongs) {
         InOrderSongIndexTree(root->getLeft(), pos,numOfSongs, artistID, artists, songs);
 
         //add song to reccomendation arrays
@@ -375,12 +376,14 @@ void MusicManager::AddSongToRecomendations(int* pos, int artistID, int songID, i
     artists[*pos] = artistID;
     songs[*pos] = songID;
     *pos = *pos + 1;
+
 }
 void MusicManager::AddSongTreeToRecomendations(AVLNode<sameArtistTreeData>* minNode, int* pos, int numOfSongs, int artistID, int* artists, int* songs){
     //initially min value song but gets updated to be node we add to reccomendation each iteration
     AVLNode<sameArtistTreeData> *songParent = minNode;
+
     //either we have enough songs or we reached end of song tree
-    while (*pos < numOfSongs && songParent != NULL) {
+    while (songParent != NULL && *pos < numOfSongs) {
         //Add min value song to recomendation arrays
         int songID = songParent->getData().songIndex;
         AddSongToRecomendations(pos, artistID, songID, artists, songs);
@@ -394,7 +397,7 @@ void MusicManager::AddSongTreeToRecomendations(AVLNode<sameArtistTreeData>* minN
 
 void MusicManager::AddArtistTreeToRecomendations(AVLNode<sameNumTreeData>* minArtistNode, int* pos, int numOfSongs,int* artists, int *songs){
     AVLNode<sameNumTreeData>* artistParent = minArtistNode;
-    while(*pos < numOfSongs && artistParent != NULL) {
+    while(artistParent != NULL && *pos < numOfSongs) {
         int artistID = artistParent->getData().artistID;
         //Add this artist's songs to reccomendations based on ascending value (per exercise rules)
         AddSongTreeToRecomendations(artistParent->getData().artist_song_index->getMinNode(), pos, numOfSongs, artistID, artists, songs);

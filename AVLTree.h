@@ -182,14 +182,7 @@ AVLNode<T>* AVLTree<T>::RemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
     if (root == NULL) {
         root_ = NULL;
         return root;
-<<<<<<< HEAD
     }
-
-||||||| merged common ancestors
-
-=======
-    }
->>>>>>> fb4d8b77b19082f7060926ee3a730a72b414aa34
 
 
     // AVL balancing algorithm
