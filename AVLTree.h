@@ -208,6 +208,7 @@ AVLNode<T>* AVLTree<T>::RemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
         root_ = NULL;
         min_ = NULL;
     }
+    return new_root;
 }
 
 
