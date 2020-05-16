@@ -160,7 +160,6 @@ StatusType MusicManager::RemoveData(int artistID) {
     artistTree->RemoveNode(artistTree->getRoot(), artist);
     std::cout << "deleted artist from main tree" << std::endl;
 
-
     return SUCCESS;
 }
 
