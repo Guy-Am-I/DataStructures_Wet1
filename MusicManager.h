@@ -154,7 +154,7 @@ StatusType MusicManager::RemoveData(int artistID) {
 
         //delete artist from current same num tree if exists (could be multiple songs with same streams so we deleted already)
         if(artistNode != NULL) {
-            std::cout << "found artist in num tree: about to delete its song tree and then remove it from statino tree" << std::endl;
+            std::cout << "found artist in num tree: about to delete its song tree and then remove it from station tree" << std::endl;
             //delete song index avl tree recursively - happens in delete tree since it deletes all data of node (inc tree)
             currentStationTree->RemoveNode(currentStationTree->getRoot(),
                                            artistNode);
@@ -167,7 +167,6 @@ StatusType MusicManager::RemoveData(int artistID) {
     //which is called in remove node
     artistTree->RemoveNode(artistTree->getRoot(), artist);
     std::cout << "deleted artist from main tree" << std::endl;
-
 
     return SUCCESS;
 }

@@ -181,9 +181,10 @@ AVLNode<T>* AVLTree<T>::RemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
             root->setRight(RemoveNode(root->getRight(),temp));
         }
     }
-    if (root == NULL)
+    if (root == NULL) {
+        root_ = NULL;
         return root;
-
+    }
 
 
     // AVL balancing algorithm
