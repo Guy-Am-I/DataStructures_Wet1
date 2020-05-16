@@ -51,8 +51,7 @@ bool DoublyLinkedList<T>::InsertNodeHead(const T& value) {
         return true; // Out of memory
 
     if(!head_) { //if there is no head (empty list)
-        new_node->setNext(NULL);
-        new_node->setPrev(NULL);
+
         head_ = new_node;
         tail_ = new_node;
     }

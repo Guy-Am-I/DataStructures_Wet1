@@ -56,6 +56,7 @@ public:
     AVLNode<T>* SubTreeMinNode(AVLNode<T> *node);
 
 };
+
 template <class T>
 AVLTree<T>::~AVLTree() {
     if(root_) {
@@ -65,7 +66,7 @@ AVLTree<T>::~AVLTree() {
 template <class T>
 void AVLTree<T>::DeleteTree(AVLNode<T>* node){
     if(node != NULL){
-
+        std::cout << "here" << std::endl;
         DeleteTree(node->getRight());
         DeleteTree(node->getLeft());
         delete(node);
@@ -99,6 +100,7 @@ bool AVLTree<T>::Insert(const T& value) {
 
     if( !new_node )
         return true; // Out of memory
+
 
     if( !root_ ) {
         root_ = new_node;

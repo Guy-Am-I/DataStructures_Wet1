@@ -75,11 +75,9 @@ StatusType MusicManager::AddDataCenter(int artistID, int numOfSongs) {
     //array for artist's songs, initialize all have null pointers
     BasicNode<recommendListData> **artist_song_streams_arr = new BasicNode<recommendListData> *[numOfSongs];
 
-    artistTreeData newArtistData = artistTreeData(artistID, numOfSongs, artist_song_streams_arr);
+    if(artistTree->Insert(artistTreeData(artistID, numOfSongs, artist_song_streams_arr))) {return ALLOCATION_ERROR;}
 
-    if(artistTree->Insert(newArtistData)) {return ALLOCATION_ERROR;}
-
-    std::cout << "Main Artist tree (first one)" << std::endl;
+    std::cout << "Main Artist tree" << std::endl;
     artistTree->printTree(artistTree->getRoot(), nullptr, false);
 
     //Song Index tree data for new artist node
@@ -101,10 +99,8 @@ StatusType MusicManager::AddDataCenter(int artistID, int numOfSongs) {
 
     }
     else {
-
-        sameNumTreeData newArtistData = sameNumTreeData(artistID, songIndexTree);
         AVLTree<sameNumTreeData>* sameNumTree = new AVLTree<sameNumTreeData>();
-        if(sameNumTree->Insert(newArtistData)) {return ALLOCATION_ERROR;}
+        if(sameNumTree->Insert(sameNumTreeData(artistID, songIndexTree))) {return ALLOCATION_ERROR;}
 
         //update start
         if(recommendList->InsertNodeHead(recommendListData(0, sameNumTree))) {return ALLOCATION_ERROR;}
@@ -310,7 +306,6 @@ StatusType  MusicManager::GetRecommendations(int numOfSongs, int *artists, int *
 
     if(*pos < numOfSongs && tailStation == NULL) {
         //less songs in Data Structure than numOfSongs (not enough songs to return)
-
         return FAILURE;
     }
     return SUCCESS;

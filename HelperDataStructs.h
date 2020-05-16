@@ -66,8 +66,8 @@ typedef struct artistTreeData {
 
     const int getDataToCompare() const {return artistID; }
     void DeleteData(){
-        std::cout << "about to del song array" << std::endl;
-        delete [] songs;
+        std::cout << "about to del song array of: "<< this->artistID << std::endl;
+        delete songs;
         std::cout << "deleted array succesfully" << std::endl;
 
     }
