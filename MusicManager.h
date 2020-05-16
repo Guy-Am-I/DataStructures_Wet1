@@ -182,10 +182,10 @@ StatusType MusicManager::ArtistSongStreamed(int artistID, int songID) {
     AVLNode<sameNumTreeData> *root = treeForCorrectStation->getRoot();
 
     //get a pointer to the songID in the songIndexTree belonging to this artist in same num tree
-    AVLTree<sameArtistTreeData> *songIndexForAppropiateStation = treeForCorrectStation->Find(
+    AVLTree<sameArtistTreeData> *songIndexForAppropriateStation = treeForCorrectStation->Find(
             root, artistID)->getData().artist_song_index;
-    AVLNode<sameArtistTreeData> *songIndexRoot = songIndexForAppropiateStation->getRoot();
-    AVLNode<sameArtistTreeData> *songNodeInIndex = songIndexForAppropiateStation->Find(
+    AVLNode<sameArtistTreeData> *songIndexRoot = songIndexForAppropriateStation->getRoot();
+    AVLNode<sameArtistTreeData> *songNodeInIndex = songIndexForAppropriateStation->Find(
             songIndexRoot, songID);
 
 
@@ -199,7 +199,6 @@ StatusType MusicManager::ArtistSongStreamed(int artistID, int songID) {
         AVLNode<sameNumTreeData> *treeRoot = sameNumTree->getRoot();
         AVLNode<sameNumTreeData> *artistNode = sameNumTree->Find(
                 treeRoot, artistID);
-
 
         if (artistNode == NULL) {
             //artist not found in station tree - create new node and add to the tree
@@ -246,8 +245,16 @@ StatusType MusicManager::ArtistSongStreamed(int artistID, int songID) {
     }
 
     //now we can delete old song node from its previous song Index tree
-    songIndexForAppropiateStation->RemoveNode(songIndexForAppropiateStation->getRoot(), songNodeInIndex);
-    std::cout << "Removed Song from previous tree (now in new tree with: " << numOfStreams + 1 << " streams)" << std::endl;
+    songIndexForAppropriateStation->RemoveNode(songIndexForAppropriateStation->getRoot(), songNodeInIndex);
+    if (songIndexForAppropriateStation->getRoot() == NULL){
+        std::cout<<"removing artistID from station"<<std::endl;
+        treeForCorrectStation->RemoveNode(treeForCorrectStation->getRoot(),
+                treeForCorrectStation->Find(treeForCorrectStation->getRoot(), artistID));
+       if(treeForCorrectStation->getRoot() ==NULL){
+           recommendList->RemoveNode(currentSongStation);
+           std::cout<<"removing station"<<std::endl;
+       }
+    }
 
     return SUCCESS;
 }

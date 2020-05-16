@@ -21,7 +21,7 @@ public:
     //class methods
     BasicNode<T>* getHead() const { return head_; }
     BasicNode<T>* getTail() const { return tail_; }
-
+    void RemoveNode(BasicNode<T>* node);
     bool InsertNodeBetween(BasicNode<T>* prev_node,BasicNode<T> *next_node, const T& value);
     bool InsertNodeHead(const T& value);
     bool InsertNodeTail(const T& value);
@@ -34,7 +34,29 @@ DoublyLinkedList<T>::~DoublyLinkedList<T>(){
         DeleteList(head_);
     }
 }
-
+template <class T>
+void DoublyLinkedList<T>::RemoveNode(BasicNode<T>* node){
+    if(node ==NULL)
+        return;
+    if(node->getNext() == NULL){ //last in list
+        if(node->getPrev() != NULL){//not first in list
+            node->getPrev()->setNext(NULL);
+            tail_= node->getPrev();
+        }else{//only node in list
+            tail_= NULL;
+            head_ = NULL;
+        }
+    } else {//not last in list
+        if(node->getPrev() != NULL){ //not first in list
+            node->getPrev()->setNext(node->getNext());
+            node->getNext()->setPrev(node->getPrev());
+        }else{//first in list
+            node->getNext()->setPrev(NULL);
+            head_= node->getNext();
+        }
+    }
+    delete(node);
+}
 template <class T>
 void DoublyLinkedList<T>::DeleteList(BasicNode<T>* node){
     if(node != NULL){
@@ -107,6 +129,5 @@ bool DoublyLinkedList<T>::InsertNodeBetween(BasicNode<T> *prev_node, BasicNode<T
     prev_node->setNext(new_node);
     return false;
 }
-
 
 #endif //WET1_LINKEDLIST_H

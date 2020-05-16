@@ -40,7 +40,7 @@ public:
 
     void InsertNode(AVLNode<T>* root, AVLNode<T>* ins);
     AVLNode<T>* RemoveNode(AVLNode<T>* root, AVLNode<T>* node);
-
+    AVLNode<T>* innerRemoveNode(AVLNode<T>* root, AVLNode<T>* node);
     AVLNode<T>* getMinNode();
 
     AVLNode<T>* getRoot() const { return root_; }
@@ -151,8 +151,10 @@ void AVLTree<T>::InsertNode(AVLNode<T>* root, AVLNode<T>* newNode) {
 }
 
 
+
 template <class T>
-AVLNode<T>* AVLTree<T>::RemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
+AVLNode<T>* AVLTree<T>::innerRemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
+
     // Find the node and delete it
     if (root == NULL)
         return root;
@@ -182,7 +184,6 @@ AVLNode<T>* AVLTree<T>::RemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
         }
     }
     if (root == NULL) {
-        root_ = NULL;
         return root;
     }
 
@@ -199,6 +200,14 @@ AVLNode<T>* AVLTree<T>::RemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
         RotateLeft(root);
     }
     return root;
+}
+template <class T>
+AVLNode<T>* AVLTree<T>::RemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
+    AVLNode<T>* new_root = innerRemoveNode(root, node);
+    if(new_root == NULL) {
+        root_ = NULL;
+        min_ = NULL;
+    }
 }
 
 
