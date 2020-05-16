@@ -159,9 +159,9 @@ AVLNode<T>* AVLTree<T>::innerRemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
     if (root == NULL)
         return root;
     if (node->getDataToCompare() < root->getDataToCompare())
-        root->setLeft(RemoveNode(root->getLeft(), node));
+        root->setLeft(innerRemoveNode(root->getLeft(), node));
     else if (node->getDataToCompare() > root->getDataToCompare())
-        root->setRight(RemoveNode(root->getRight(), node));
+        root->setRight(innerRemoveNode(root->getRight(), node));
     else {
         if ((root->getLeft() == NULL) ||
             (root->getRight() == NULL)) {
@@ -180,7 +180,7 @@ AVLNode<T>* AVLTree<T>::innerRemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
 
             root->setData(temp->getData());
 
-            root->setRight(RemoveNode(root->getRight(),temp));
+            root->setRight(innerRemoveNode(root->getRight(),temp));
         }
     }
     if (root == NULL) {
