@@ -66,7 +66,7 @@ AVLTree<T>::~AVLTree() {
 template <class T>
 void AVLTree<T>::DeleteTree(AVLNode<T>* node){
     if(node != NULL){
-        std::cout << "here" << std::endl;
+        //std::cout << "here" << std::endl;
         DeleteTree(node->getRight());
         DeleteTree(node->getLeft());
         delete(node);
@@ -187,7 +187,6 @@ AVLNode<T>* AVLTree<T>::innerRemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
         return root;
     }
 
-
     // AVL balancing algorithm
     int balance = BalanceFactor(root);
     if (balance > 1) { // left tree unbalanced
@@ -199,14 +198,18 @@ AVLNode<T>* AVLTree<T>::innerRemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
             RotateRight(root->getRight());
         RotateLeft(root);
     }
+    if(balance >1||balance<-1)
+    return root->getParent();
     return root;
 }
 template <class T>
 AVLNode<T>* AVLTree<T>::RemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
     AVLNode<T>* new_root = innerRemoveNode(root, node);
+    root_ = new_root;
     if(new_root == NULL) {
-        root_ = NULL;
         min_ = NULL;
+    }else{
+        min_ = this->SubTreeMinNode(root_);
     }
     return new_root;
 }
