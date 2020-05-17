@@ -11,7 +11,7 @@
 //Data types for all 4 different Data Structures we use in this problem
 //This way the tree and list data structures can stay as a generic template
 //and thus only the data changes to our needs
-typedef struct sameArtistTreeData {
+struct sameArtistTreeData {
     int songIndex;
     sameArtistTreeData(int songIndex_) {
         songIndex = songIndex_;
@@ -19,9 +19,9 @@ typedef struct sameArtistTreeData {
 
     const int getDataToCompare() const {return songIndex; }
     void DeleteData(){}
-} sameArtistTreeData;
+};
 
-typedef struct sameNumTreeData{
+struct sameNumTreeData{
     int artistID;
     AVLTree<sameArtistTreeData>* artist_song_index;
 
@@ -31,13 +31,12 @@ typedef struct sameNumTreeData{
     }
     const int getDataToCompare() const  {return artistID; }
     void DeleteData(){
-        //std::cout << "about to del song tree" << std::endl;
         delete(artist_song_index);
     }
-} sameNumTreeData;
+};
 
 
-typedef struct recommendListData {
+struct recommendListData {
     int numberOfStreams;
     AVLTree<sameNumTreeData>* sameNumTree; //AVL tree representing all artists with songs having same number of streams
 
@@ -48,12 +47,10 @@ typedef struct recommendListData {
 
     const int getDataToCompare() const {return numberOfStreams; }
     void DeleteData(){
-        //std::cout << "about to del artist tree in a station" << std::endl;
         delete(sameNumTree);
     }
-} recommendListData;
-
-typedef struct artistTreeData {
+};
+struct artistTreeData {
     int artistID; //unique artist number
     int numOfSongs;
     BasicNode<recommendListData>** songs; //pointer to song_array
@@ -65,13 +62,12 @@ typedef struct artistTreeData {
     }
 
     const int getDataToCompare() const {return artistID; }
+
     void DeleteData(){
-        //std::cout << "about to del song array of: "<< this->artistID << std::endl;
         delete songs;
-        //std::cout << "deleted array succesfully" << std::endl;
 
     }
-} artistTreeData;
+};
 
 
 

@@ -66,7 +66,6 @@ AVLTree<T>::~AVLTree() {
 template <class T>
 void AVLTree<T>::DeleteTree(AVLNode<T>* node){
     if(node != NULL){
-        //std::cout << "here" << std::endl;
         DeleteTree(node->getRight());
         DeleteTree(node->getLeft());
         delete(node);
@@ -166,20 +165,21 @@ AVLNode<T>* AVLTree<T>::innerRemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
         if ((root->getLeft() == NULL) ||
             (root->getRight() == NULL)) {
             AVLNode<T> *temp = root->getLeft() ? root->getLeft() : root->getRight();
+            //nodeToDelete is leaf i.e. no children
             if (temp == NULL) {
                 temp = root;
                 root = NULL;
-            } else
+            } else //nodetoDelete had one child so we substitute contents, then delete the child
                 *root = *temp;
 
             delete(temp); //deleting the node
 
         } else {
-
+            //nodeToDelete had 2 children, find minNode right subTree
             AVLNode<T> *temp = SubTreeMinNode(root->getRight());
-
+            //substitue contents of nodeToDelete with that of the min node
             root->setData(temp->getData());
-
+            //RemoveThe minNode we just subbed contents with
             root->setRight(innerRemoveNode(root->getRight(),temp));
         }
     }
@@ -198,8 +198,9 @@ AVLNode<T>* AVLTree<T>::innerRemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
             RotateRight(root->getRight());
         RotateLeft(root);
     }
-    if(balance >1||balance<-1)
-    return root->getParent();
+
+    //if(balance > 1 || balance< -1)  return root->getParent();
+
     return root;
 }
 template <class T>
@@ -210,7 +211,8 @@ AVLNode<T>* AVLTree<T>::RemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
     if(new_root == NULL) {
         min_ = NULL;
     }else{
-        min_ = this->SubTreeMinNode(root_);
+        //min_ = this->SubTreeMinNode(root_);
+        min_ = SubTreeMinNode(root_);
     }
     return new_root;
 }

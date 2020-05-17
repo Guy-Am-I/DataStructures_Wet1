@@ -24,10 +24,6 @@ public:
     StatusType ArtistSongStreamed(int artistID, int songID);
     StatusType AmountOfStreams(int artistID, int songID, int* streams);
     StatusType GetRecommendations(int numOfSongs, int *artists, int* songs);
-    void EndProgram();
-
-    void DeleteSubTrees(AVLNode<sameNumTreeData>* root);
-    void DeleteSubArrays(AVLNode<artistTreeData>* root);
 
     void AddArtistTreeToRecomendations(AVLNode<sameNumTreeData>* minArtistNode, int* pos, int numOfSongs,int* artists, int *songs);
     void AddSongTreeToRecomendations(AVLNode<sameArtistTreeData>* minNode, int* pos, int numOfSongs, int artistID, int* artists, int* songs);
@@ -77,9 +73,6 @@ StatusType MusicManager::AddDataCenter(int artistID, int numOfSongs) {
     BasicNode<recommendListData> **artist_song_streams_arr = new BasicNode<recommendListData> *[numOfSongs];
 
     if(artistTree->Insert(artistTreeData(artistID, numOfSongs, artist_song_streams_arr))) {return ALLOCATION_ERROR;}
-
-    //std::cout << "Main Artist tree" << std::endl;
-    //artistTree->printTree(artistTree->getRoot(), nullptr, false);
 
     //Song Index tree data for new artist node
     AVLTree<sameArtistTreeData>* songIndexTree = new AVLTree<sameArtistTreeData>();
@@ -143,11 +136,10 @@ StatusType MusicManager::RemoveData(int artistID) {
 
         //delete artist from current same num tree if exists (could be multiple songs with same streams so we deleted already)
         if(artistNode != NULL) {
-            //std::cout << "found artist in num tree: about to delete its song tree and then remove it from station tree" << std::endl;
+
             //delete song index avl tree recursively - happens in delete tree since it deletes all data of node (inc tree)
             currentStationTree->RemoveNode(currentStationTree->getRoot(),
                                            artistNode);
-            //std::cout << "removed artist from station tree" << std::endl;
         }
 
 
@@ -155,7 +147,6 @@ StatusType MusicManager::RemoveData(int artistID) {
     //Delete artist songs stream array at the end, happens in node destructor
     //which is called in remove node
     artistTree->RemoveNode(artistTree->getRoot(), artist);
-    //std::cout << "deleted artist from main tree" << std::endl;
 
     return SUCCESS;
 }
@@ -219,14 +210,6 @@ StatusType MusicManager::ArtistSongStreamed(int artistID, int songID) {
         //update song array containing pointers to station
         artist->getData().songs[songID] = nextStation;
 
-        //std::cout << "Number of streams for station: " << nextStation->getData().numberOfStreams << std::endl;
-
-        //std::cout << "Tree for this station:" << std::endl;
-        //sameNumTree->printTree(sameNumTree->getRoot(),nullptr, false);
-        //std:cout << "song index tree for artist (song streamed) in this station" << std::endl;
-        artistNode = sameNumTree->Find(sameNumTree->getRoot(), artistID);
-        //artistNode->getData().artist_song_index->printTree(artistNode->getData().artist_song_index->getRoot(), nullptr, false);
-
     } else {
 
         //insert new station in between these 2 stations and add the song to appropriate tree
@@ -242,20 +225,19 @@ StatusType MusicManager::ArtistSongStreamed(int artistID, int songID) {
         //update song array containing pointers to station
         artist->getData().songs[songID] = currentSongStation->getNext();
 
-        //std::cout << "New Station with : " << numOfStreams + 1 << "streams" << std::endl;
     }
 
     //now we can delete old song node from its previous song Index tree
     songIndexForAppropriateStation->RemoveNode(songIndexForAppropriateStation->getRoot(), songNodeInIndex);
-    //std::cout << "song tree for prev station:" << std::endl;
-    //songIndexForAppropriateStation->printTree(songIndexForAppropriateStation->getRoot(),nullptr, false);
+
     if (songIndexForAppropriateStation->getRoot() == NULL){
-        //std::cout<<"removing artistID from station"<<std::endl;
+        //removing artistID from station
         treeForCorrectStation->RemoveNode(treeForCorrectStation->getRoot(),
                 treeForCorrectStation->Find(treeForCorrectStation->getRoot(), artistID));
+
        if(treeForCorrectStation->getRoot() ==NULL){
+           //removing station
            recommendList->RemoveNode(currentSongStation);
-           //std::cout<<"removing station"<<std::endl;
        }
     }
 
@@ -312,6 +294,7 @@ StatusType  MusicManager::GetRecommendations(int numOfSongs, int *artists, int *
 
         //advance to previous station (next highest in streams)
         tailStation = tailStation->getPrev();
+
     }
 
     if(*pos < numOfSongs && tailStation == NULL) {
@@ -330,33 +313,14 @@ MusicManager::~MusicManager() {
     delete(this->artistTree);
 
     //Delete RecommendList and all trees and sub trees inside
-    delete(recommendList);
+    delete(this->recommendList);
 }
 
 //HELPER FUNCTIONS
-void MusicManager::DeleteSubTrees(AVLNode<sameNumTreeData>* root) {
-    if( root ) {
-        DeleteSubTrees(root->getLeft());  // Left
-        //parent,
-        // for each node delete the tree associated with it
-        AVLTree<sameArtistTreeData>* treeToDelete = root->getData().artist_song_index;
-        delete(treeToDelete);
 
-        DeleteSubTrees(root->getRight()); // Right
-    }
-}
-void MusicManager::DeleteSubArrays(AVLNode<artistTreeData>* root) {
-    if( root ) {
-        DeleteSubArrays(root->getLeft());  // Left
-        //parent,
-        // for each node delete the array associated with it
-        free(root->getData().songs);
-
-        DeleteSubArrays(root->getRight()); // Right
-    }
-}
 
 void MusicManager::InOrderSameNumTree(AVLNode<sameNumTreeData>* root,int* pos, int numOfSongs, int* artists, int* songs){
+
     if (root != NULL && *pos < numOfSongs) {
         InOrderSameNumTree(root->getLeft(),pos, numOfSongs, artists, songs);
 
@@ -365,8 +329,10 @@ void MusicManager::InOrderSameNumTree(AVLNode<sameNumTreeData>* root,int* pos, i
 
         InOrderSameNumTree(root->getRight(),pos, numOfSongs, artists, songs);
     }
+
 }
 void MusicManager::InOrderSongIndexTree(AVLNode<sameArtistTreeData>* root, int* pos, int numOfSongs,int artistID, int* artists, int* songs){
+
     if(root != NULL && *pos < numOfSongs) {
         InOrderSongIndexTree(root->getLeft(), pos,numOfSongs, artistID, artists, songs);
 
@@ -375,21 +341,27 @@ void MusicManager::InOrderSongIndexTree(AVLNode<sameArtistTreeData>* root, int* 
 
         InOrderSongIndexTree(root->getRight(), pos,numOfSongs, artistID, artists, songs);
     }
+
 }
 void MusicManager::AddSongToRecomendations(int* pos, int artistID, int songID, int* artists, int* songs){
+
     artists[*pos] = artistID;
     songs[*pos] = songID;
     *pos = *pos + 1;
 
+
 }
 void MusicManager::AddSongTreeToRecomendations(AVLNode<sameArtistTreeData>* minNode, int* pos, int numOfSongs, int artistID, int* artists, int* songs){
+
     //initially min value song but gets updated to be node we add to recommendation each iteration
     AVLNode<sameArtistTreeData> *songParent = minNode;
 
     //either we have enough songs or we reached end of song tree
     while (songParent != NULL && *pos < numOfSongs) {
         //Add min value song to recommendation arrays
+
         int songID = songParent->getData().songIndex;
+
         AddSongToRecomendations(pos, artistID, songID, artists, songs);
 
         //scan right sub tree (and add all songs with it)
@@ -397,9 +369,11 @@ void MusicManager::AddSongTreeToRecomendations(AVLNode<sameArtistTreeData>* minN
                              artistID, artists, songs);
         songParent = songParent->getParent();
     }
+
 }
 
 void MusicManager::AddArtistTreeToRecomendations(AVLNode<sameNumTreeData>* minArtistNode, int* pos, int numOfSongs,int* artists, int *songs){
+
     AVLNode<sameNumTreeData>* artistParent = minArtistNode;
     while(artistParent != NULL && *pos < numOfSongs) {
         int artistID = artistParent->getData().artistID;
@@ -412,6 +386,7 @@ void MusicManager::AddArtistTreeToRecomendations(AVLNode<sameNumTreeData>* minAr
         //go up in tree (update parent node)
         artistParent = artistParent->getParent();
     }
+
 }
 
 StatusType MusicManager::CheckValidity(int artistID, int songID, bool returnFalseIfFound){
