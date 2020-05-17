@@ -4,7 +4,7 @@
 
 #ifndef WET1_LINKEDLIST_H
 #define WET1_LINKEDLIST_H
-
+#pragma once
 #include "Node.h"
 
 template <class T>

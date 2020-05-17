@@ -4,7 +4,7 @@
 
 #ifndef WET1_TREE_H
 #define WET1_TREE_H
-
+#pragma once
 #include "Node.h"
 #include <iostream>
 #include <string>
@@ -304,7 +304,7 @@ AVLNode<T>* AVLTree<T>::SubTreeMinNode(AVLNode<T> *node) {
 
 
 // Helper function to print branches of the binary tree
-void showTrunks(Trunk *p)
+static void showTrunks(Trunk *p)
 {
     if (p == nullptr)
         return;

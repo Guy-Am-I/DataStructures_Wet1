@@ -3,4 +3,4 @@ project(Wet1)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Wet1 main1.cpp library1.cpp)
+add_executable(Wet1 main1.cpp MusicManager.cpp library1.cpp)

@@ -3,7 +3,6 @@
 //
 #include "library1.h"
 #include "MusicManager.h"
-
 void *Init() {
     MusicManager *DS = new MusicManager();
     return (void *)DS;

@@ -4,7 +4,7 @@
 
 #ifndef WET1_HELPERDATASTRUCTS_H
 #define WET1_HELPERDATASTRUCTS_H
-
+#pragma once
 #include "AVLTree.h"
 
 

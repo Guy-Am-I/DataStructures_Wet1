@@ -1,10 +1,9 @@
 //
 // Created by Guy Steinberg on 5/14/20.
 //
-
 #ifndef WET1_NODE_H
 #define WET1_NODE_H
-
+#pragma once
 #include <iostream>
 
 template <class T>
