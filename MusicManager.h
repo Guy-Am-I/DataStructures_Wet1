@@ -134,16 +134,17 @@ StatusType MusicManager::RemoveData(int artistID) {
         //find artist Node in same num tree
         AVLNode<sameNumTreeData>* artistNode = currentStationTree->Find(root, artistID);
 
+
         //delete artist from current same num tree if exists (could be multiple songs with same streams so we deleted already)
         if(artistNode != NULL) {
-
             //delete song index avl tree recursively - happens in delete tree since it deletes all data of node (inc tree)
-            currentStationTree->RemoveNode(currentStationTree->getRoot(),
-                                           artistNode);
+            currentStationTree->RemoveNode(currentStationTree->getRoot(),artistNode);
+
         }
 
 
     }
+
     //Delete artist songs stream array at the end, happens in node destructor
     //which is called in remove node
     artistTree->RemoveNode(artistTree->getRoot(), artist);
@@ -231,13 +232,17 @@ StatusType MusicManager::ArtistSongStreamed(int artistID, int songID) {
     songIndexForAppropriateStation->RemoveNode(songIndexForAppropriateStation->getRoot(), songNodeInIndex);
 
     if (songIndexForAppropriateStation->getRoot() == NULL){
+
         //removing artistID from station
         treeForCorrectStation->RemoveNode(treeForCorrectStation->getRoot(),
                 treeForCorrectStation->Find(treeForCorrectStation->getRoot(), artistID));
 
+
        if(treeForCorrectStation->getRoot() ==NULL){
+
            //removing station
            recommendList->RemoveNode(currentSongStation);
+
        }
     }
 

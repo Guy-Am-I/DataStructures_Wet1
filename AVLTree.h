@@ -169,7 +169,7 @@ AVLNode<T>* AVLTree<T>::innerRemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
             if (temp == NULL) {
                 temp = root;
                 root = NULL;
-            } else //nodetoDelete had one child so we substitute contents, then delete the child
+            } else //nodetoDelete had one child so we substitute contents(i.e change places in tree) , then delete the child
                 *root = *temp;
 
             delete(temp); //deleting the node
@@ -177,7 +177,7 @@ AVLNode<T>* AVLTree<T>::innerRemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
         } else {
             //nodeToDelete had 2 children, find minNode right subTree
             AVLNode<T> *temp = SubTreeMinNode(root->getRight());
-            //substitue contents of nodeToDelete with that of the min node
+            //substitue just contents of nodeToDelete with that of the min node (keep node in same positin in tree)
             root->setData(temp->getData());
             //RemoveThe minNode we just subbed contents with
             root->setRight(innerRemoveNode(root->getRight(),temp));
@@ -199,7 +199,7 @@ AVLNode<T>* AVLTree<T>::innerRemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
         RotateLeft(root);
     }
 
-    //if(balance > 1 || balance< -1)  return root->getParent();
+    if(balance > 1 || balance< -1)  return root->getParent();
 
     return root;
 }
@@ -207,12 +207,11 @@ template <class T>
 AVLNode<T>* AVLTree<T>::RemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
     AVLNode<T>* new_root = innerRemoveNode(root, node);
     root_ = new_root;
-    root_->setParent(NULL);
     if(new_root == NULL) {
         min_ = NULL;
     }else{
-        //min_ = this->SubTreeMinNode(root_);
-        min_ = SubTreeMinNode(root_);
+        root_->setParent(NULL);
+        min_ = this->SubTreeMinNode(root_);
     }
     return new_root;
 }
