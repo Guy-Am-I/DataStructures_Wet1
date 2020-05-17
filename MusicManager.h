@@ -223,7 +223,7 @@ StatusType MusicManager::ArtistSongStreamed(int artistID, int songID) {
 
         //std::cout << "Tree for this station:" << std::endl;
         //sameNumTree->printTree(sameNumTree->getRoot(),nullptr, false);
-       // std:cout << "song index tree for artist (song streamed) in this station" << std::endl;
+        //std:cout << "song index tree for artist (song streamed) in this station" << std::endl;
         artistNode = sameNumTree->Find(sameNumTree->getRoot(), artistID);
         //artistNode->getData().artist_song_index->printTree(artistNode->getData().artist_song_index->getRoot(), nullptr, false);
 

@@ -206,6 +206,7 @@ template <class T>
 AVLNode<T>* AVLTree<T>::RemoveNode(AVLNode<T> *root, AVLNode<T>* node) {
     AVLNode<T>* new_root = innerRemoveNode(root, node);
     root_ = new_root;
+    root_->setParent(NULL);
     if(new_root == NULL) {
         min_ = NULL;
     }else{
